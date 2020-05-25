@@ -46,9 +46,9 @@ def generate_latent_images(zs, truncation_psi,save_npy,prefix):
     
     for z_idx, z in enumerate(zs):
         if isinstance(z,list):
-          z = np.array(z).reshape(1,256)
+          z = np.array(z).reshape(1,512)
         elif isinstance(z,np.ndarray):
-          z.reshape(1,256)
+          z.reshape(1,512)
         print('Generating image for step %d/%d ...' % (z_idx, len(zs)))
         Gs_kwargs.truncation_psi = truncation_psi[z_idx]
         noise_rnd = np.random.RandomState(1) # fix noise
@@ -158,7 +158,7 @@ def generate_neighbors(network_pkl, seeds, diameter, truncation_psi, num_samples
         z_prefix = 'seed%04d_neighbor' % seed
 
         for s in range(num_samples):
-            random = np.random.uniform(-diameter,diameter,[1,256])
+            random = np.random.uniform(-diameter,diameter,[1,512])
 #             zs.append(np.clip((og_z+random),-1,1))
             new_z = np.clip(np.add(og_z,random),-1,1)
             images = Gs.run(new_z, None, **Gs_kwargs) # [minibatch, height, width, channel]
@@ -191,13 +191,13 @@ class OSN():
 def get_noiseloop(endpoints, nf, d, start_seed):
     features = []
     zs = []
-    for i in range(256):
+    for i in range(512):
       features.append(OSN(i+start_seed,d))
 
     inc = (np.pi*2)/nf
     for f in range(nf):
-      z = np.random.randn(1, 256)
-      for i in range(256):
+      z = np.random.randn(1, 512)
+      for i in range(512):
         z[0,i] = features[i].get_val(inc*f) 
       zs.append(z)
 
@@ -217,7 +217,7 @@ def get_latent_interpolation_bspline(endpoints, nf, k, s, shuffle):
         tck, u = interpolate.splprep([x[:,j] for j in range(i,i+10)], k=k, s=s)
         out = interpolate.splev(np.linspace(0, 1, num=nf, endpoint=True), tck)
         latents[i:i+10,:] += np.array(out)
-    latents = latents / np.array(nss).reshape((256,1))
+    latents = latents / np.array(nss).reshape((512,1))
     return latents.T
 
 def generate_latent_walk(network_pkl, truncation_psi, walk_type, frames, seeds,diameter=2.0, start_seed=0 ):
@@ -252,12 +252,12 @@ def generate_latent_walk(network_pkl, truncation_psi, walk_type, frames, seeds,d
         #   print(ws[0].shape)
         #   w = []
         #   for i in range(len(ws)):
-        #     w.append(np.asarray(ws[i]).reshape(256,18))
+        #     w.append(np.asarray(ws[i]).reshape(512,18))
         #   points = get_latent_interpolation_bspline(ws,frames,3, 20, shuffle=False)
         # else:
           z = []
           for i in range(len(zs)):
-            z.append(np.asarray(zs[i]).reshape(256))
+            z.append(np.asarray(zs[i]).reshape(512))
           points = get_latent_interpolation_bspline(z,frames,3, 20, shuffle=False)
 
     # from Dan Shiffman: https://editor.p5js.org/dvs/sketches/Gb0xavYAR
