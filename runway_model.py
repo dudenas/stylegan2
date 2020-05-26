@@ -22,7 +22,7 @@ def setup(opts):
 
 
 generate_inputs = {
-    'z': runway.vector(256, sampling_std=0.5),
+    'z': runway.vector(512, sampling_std=0.5),
     'truncation': runway.number(min=0, max=1, default=0.8, step=0.01)
 }
 
@@ -31,7 +31,7 @@ generate_inputs = {
 def convert(model, inputs):
     z = inputs['z']
     truncation = inputs['truncation']
-    latents = z.reshape((1, 256))
+    latents = z.reshape((1, 512))
     images = model.run(latents, None, truncation_psi=truncation,
                        randomize_noise=False, output_transform=fmt)
     output = np.clip(images[0], 0, 255).astype(np.uint8)
