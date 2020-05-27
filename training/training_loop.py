@@ -417,6 +417,9 @@ def training_loop(
                 if network_snapshot_ticks is not None and (cur_tick % (network_snapshot_ticks*4) == 0):
                     metrics.run(pkl, run_dir=dnnlib.make_run_dir_path(), data_dir=dnnlib.convert_path(
                         data_dir), num_gpus=num_gpus, tf_config=tf_config)
+            # Save latest tick as latest pkl
+            pkl = dnnlib.make_run_dir_path('network-snapshot-latest.pkl')
+            misc.save_pkl((G, D, Gs), pkl)
 
             # Update summaries and RunContext.
             metrics.update_autosummaries()
