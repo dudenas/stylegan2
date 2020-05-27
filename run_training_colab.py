@@ -84,6 +84,7 @@ def run(dataset, data_dir, result_dir, config_id, num_gpus, total_kimg, gamma, m
     256
     size_base 128
     gpu_base 16
+    test
     '''
     sched.minibatch_size_base = 64
     sched.minibatch_gpu_base = 8
